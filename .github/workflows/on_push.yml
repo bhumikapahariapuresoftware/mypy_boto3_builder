@@ -122,6 +122,5 @@ jobs:
               poetry install -n && \
               python3.10 -m pip install -U boto3-stubs botocore-stubs pytest && \
               python3.10 -m pytest && \
-              npm install -g pyright && \
               python3.10 -m scripts/integration.py && \
               deactivate'

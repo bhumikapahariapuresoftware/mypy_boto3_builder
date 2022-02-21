@@ -49,7 +49,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           python -m pytest
-
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-latest
@@ -89,38 +88,3 @@ jobs:
       - name: Integration tests
         run: |
           python scripts/integration.py
-
-
-  armv64_py38_job:
-      name: Build and Test for arm64 with py38
-      runs-on: ubuntu-20.04
-      steps:
-        - uses: actions/checkout@v2
-        - name: Set up QEMU
-          id: qemu
-          uses: docker/setup-qemu-action@v1
-        - name: Install and Run tests
-          run: |
-            docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
-              arm64v8/ubuntu:20.04 \
-              bash -exc 'apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa && apt-get update && \
-              apt install -y python3.10 && \
-              ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && export DEBIAN_FRONTEND=noninteractive && apt-get install -y tzdata && dpkg-reconfigure --frontend noninteractive tzdata && \
-              python3 --version && \
-              update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2 && \
-              update-alternatives --config python3 && \
-              apt-get -y install python3-pip python3-venv curl git && \
-              apt install -y python3.10-venv && python3.10 -m venv py310-venv && \
-              source py310-venv/bin/activate && \
-              python3 --version && \
-              uname -m && \
-              whoami && \
-              pwd && \
-              ls && \
-              python3.10 -m pip install -U poetry pip wheel && \
-              poetry config virtualenvs.create false && \
-              poetry install -n && \
-              python3.10 -m pip install -U boto3-stubs botocore-stubs pytest && \
-              python3.10 -m pytest && \
-              python3.10 -m scripts/integration.py && \
-              deactivate'
